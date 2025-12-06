@@ -1,0 +1,25 @@
+road_obstacles:
+  # - type: barrel
+  #   s: 40.0
+  #   lane: 0
+  #   radius: 0.6
+
+  # - type: barrel
+  #   s: 60.0
+  #   lane: 1
+  #   radius: 0.6
+    
+  - type: barrel
+    s: 80.0
+    lane: 1
+    radius: 0.6
+
+  # - type: barrel
+  #   s: 140.0
+  #   lane: 0
+  #   radius: 0.6
+
+
+scenario:
+  randomize_positions: false
+  randomize_lanes: false
