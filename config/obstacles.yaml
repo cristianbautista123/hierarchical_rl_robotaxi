@@ -14,10 +14,10 @@ road_obstacles:
     lane: 1
     radius: 0.6
 
-  # - type: barrel
-  #   s: 140.0
-  #   lane: 0
-  #   radius: 0.6
+  - type: barrel
+    s: 140.0
+    lane: 0
+    radius: 0.6
 
 
 scenario:

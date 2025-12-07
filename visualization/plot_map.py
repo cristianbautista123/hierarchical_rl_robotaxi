@@ -3,6 +3,7 @@ import sys
 import yaml
 import numpy as np
 import matplotlib.pyplot as plt
+import argparse  # <-- añadido
 
 PROJECT_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
 if PROJECT_ROOT not in sys.path:
@@ -30,7 +31,10 @@ def load_obstacles():
     return data.get("road_obstacles", [])
 
 
-def main():
+def main(output_dir):
+    # Where to save the final image
+    output_png = os.path.join(output_dir, "map_visualization.png")
+
     # --------------------------------------------------------
     # Load centerlines
     # --------------------------------------------------------
@@ -105,11 +109,23 @@ def main():
     ax.set_title("Map Visualization with Obstacles")
     ax.legend()
 
-    plt.savefig(OUTPUT_PNG, dpi=200, bbox_inches="tight")
-    print(f"\nMap saved at: {OUTPUT_PNG}\n")
+    plt.savefig(output_png, dpi=200, bbox_inches="tight")
+    print(f"\nMap saved at: {output_png}\n")
 
-    plt.show()
+    #plt.show()
 
 
 if __name__ == "__main__":
-    main()
+    parser = argparse.ArgumentParser()
+    parser.add_argument(
+        "--output_dir",
+        type=str,
+        default=CONFIG_DIR,
+        help="Directory where map_visualization.png will be saved"
+    )
+    args = parser.parse_args()
+
+    # Ensure folder exists
+    os.makedirs(args.output_dir, exist_ok=True)
+
+    main(args.output_dir)
