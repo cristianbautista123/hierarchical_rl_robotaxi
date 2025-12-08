@@ -13,7 +13,8 @@ env = TwoLaneHighwayEnv(
     render_mode="human",
 )
 
-model = PPO.load("ppo_highway_final")
+model_path = os.path.join(PROJECT_ROOT, "logs", "2025-12-06_21-21-02", "models", "best_model.zip")
+model = PPO.load(model_path)
 
 obs, info = env.reset()
 
