@@ -196,9 +196,9 @@ class TwoLaneHighwayEnv(gym.Env):
             #target_lane = self.lane_id
             if action == 1:
                 self.in_lane_change = True
-                target_lane = 1 - self.lane_id
+                self.target_lane = 1 - self.lane_id
                 #reward -= self.lane_change_penalty # is it necessary?
-                target_d = self.lane_offsets[target_lane]
+                target_d = self.lane_offsets[self.target_lane]
             else:
                 # Stay in lane
                 target_d = self.lane_offsets[self.lane_id]
@@ -210,6 +210,8 @@ class TwoLaneHighwayEnv(gym.Env):
         step_d = np.clip(d_err, -self.d_step_max, self.d_step_max)
         self.d += step_d
 
+        print("DEBUG TYPE self.d:", type(self.d), self.d)
+        print("DEBUG TYPE target_d:", type(target_d), target_d)
 
         # Check if lane change is complete
         if self.in_lane_change:
