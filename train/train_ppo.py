@@ -37,7 +37,7 @@ def make_env():
     env = TwoLaneHighwayEnv(
         config_dir=os.path.join(PROJECT_ROOT, "config"),
         render_mode=None,
-        lane_change_penalty=0.0,
+        lane_change_penalty=1.5,
     )
     env = Monitor(env)
     return env

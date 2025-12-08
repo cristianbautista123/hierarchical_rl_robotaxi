@@ -85,8 +85,8 @@ class TwoLaneHighwayEnv(gym.Env):
         # ===========================
         # Spaces
         # ===========================
-        obs_low = np.array([0, -20, 0], dtype=np.float32)
-        obs_high = np.array([1, 20, 1], dtype=np.float32)
+        obs_low = np.array([0, -20, 0, 0, 0], dtype=np.float32)
+        obs_high = np.array([1, 20, 1, 50, 50], dtype=np.float32)
         self.observation_space = spaces.Box(obs_low, obs_high)
         self.action_space = spaces.Discrete(2)
 
@@ -166,7 +166,27 @@ class TwoLaneHighwayEnv(gym.Env):
         scenario_randomization = data.get("scenario", {})
 
         return road_obstacles, roadside_objects, construction_clusters, scenario_randomization
+    
+    # Semantic lidar-like distance to next obstacle in given lane
+    def _distance_to_next_obstacle(self, lane):
+        lane_center = self.lane_offsets[lane]
+        max_dist = 50.0
+        distances = []
 
+        # Road obstacles
+        for obs in self.road_obstacles:
+            if abs(obs["d"] - lane_center) < 1.0:
+                if obs["s"] > self.s:
+                    distances.append(obs["s"] - self.s)
+
+        # Cones
+        for cluster in self.construction_clusters:
+            for cone in cluster:
+                if abs(cone["d"] - lane_center) < 1.0:
+                    if cone["s"] > self.s:
+                        distances.append(cone["s"] - self.s)
+
+        return float(min(distances)) if distances else max_dist
 
     # ============================================================
     # RESET
@@ -197,7 +217,7 @@ class TwoLaneHighwayEnv(gym.Env):
             if action == 1:
                 self.in_lane_change = True
                 self.target_lane = 1 - self.lane_id
-                #reward -= self.lane_change_penalty # is it necessary?
+                reward -= self.lane_change_penalty # is it necessary? -It is.
                 target_d = self.lane_offsets[self.target_lane]
             else:
                 # Stay in lane
@@ -210,8 +230,8 @@ class TwoLaneHighwayEnv(gym.Env):
         step_d = np.clip(d_err, -self.d_step_max, self.d_step_max)
         self.d += step_d
 
-        print("DEBUG TYPE self.d:", type(self.d), self.d)
-        print("DEBUG TYPE target_d:", type(target_d), target_d)
+        # print("DEBUG TYPE self.d:", type(self.d), self.d)
+        # print("DEBUG TYPE target_d:", type(target_d), target_d)
 
         # Check if lane change is complete
         if self.in_lane_change:
@@ -276,10 +296,14 @@ class TwoLaneHighwayEnv(gym.Env):
     # OBS + INFO
     # ============================================================
     def _get_obs(self):
+        dist_curr = self._distance_to_next_obstacle(self.lane_id)
+        dist_other = self._distance_to_next_obstacle(1 - self.lane_id)
         return np.array([
             np.clip(self.s / self.s_max, 0, 1),
             self.d,
-            float(self.lane_id)
+            float(self.lane_id),
+            dist_curr,
+            dist_other
         ], dtype=np.float32)
 
 
