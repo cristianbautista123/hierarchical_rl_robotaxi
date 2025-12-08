@@ -94,6 +94,9 @@ class TwoLaneHighwayEnv(gym.Env):
         self._fig = None
         self._ax = None
 
+        self.in_lane_change = False
+        self.target_lane = None
+
 
     # ============================================================
     # LOAD YAML
@@ -187,21 +190,33 @@ class TwoLaneHighwayEnv(gym.Env):
     def step(self, action):
 
         reward = 0.0
-
-        # Toggle lane
-        target_lane = self.lane_id
-        if action == 1:
-            target_lane = 1 - self.lane_id
-            reward -= self.lane_change_penalty
-
-        target_d = self.lane_offsets[target_lane]
+        
+        if not self.in_lane_change:
+            # Toggle lane
+            #target_lane = self.lane_id
+            if action == 1:
+                self.in_lane_change = True
+                target_lane = 1 - self.lane_id
+                #reward -= self.lane_change_penalty # is it necessary?
+                target_d = self.lane_offsets[target_lane]
+            else:
+                # Stay in lane
+                target_d = self.lane_offsets[self.lane_id]
+        else:
+            target_d = self.lane_offsets[self.target_lane]
 
         # Move laterally
         d_err = target_d - self.d
         step_d = np.clip(d_err, -self.d_step_max, self.d_step_max)
         self.d += step_d
-        if abs(self.d - target_d) < 0.2:
-            self.lane_id = target_lane
+
+
+        # Check if lane change is complete
+        if self.in_lane_change:
+            if abs(self.d - target_d) < 0.2:
+                self.lane_id = self.target_lane
+                self.in_lane_change = False
+                self.target_lane = None
 
         # Move forward
         s_prev = self.s
