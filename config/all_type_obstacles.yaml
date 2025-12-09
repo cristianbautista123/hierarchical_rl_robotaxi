@@ -47,7 +47,6 @@ roadside_objects:
   - type: traffic_light
     s: 250.0
     d: 3.5
-    state: green       # can be: red, yellow, green
     cycle_time: 30.0   # seconds
     radius: 0.5
 
