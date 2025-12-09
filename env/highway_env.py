@@ -333,7 +333,7 @@ class TwoLaneHighwayEnv(gym.Env):
         # ------------------------------
         if dist_light < 10.0 and light_state == 0:  # RED light
             if action != 2:
-                reward -= 30  # ran a red light
+                reward -= 5  # ran a red light
         else:
             # stopping unnecessarily at green/yellow
             if action == 2 and dist_light > 10.0:

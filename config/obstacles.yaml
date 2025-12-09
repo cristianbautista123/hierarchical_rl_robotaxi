@@ -1,31 +1,31 @@
-road_obstacles:
-  - type: barrel
-    s: 90.0
-    lane: 0
-    radius: 0.6
+# road_obstacles:
+#   - type: barrel
+#     s: 90.0
+#     lane: 0
+#     radius: 0.6
 
-  - type: barrel
-    s: 120.0
-    lane: 1
-    radius: 0.6
+#   - type: barrel
+#     s: 120.0
+#     lane: 1
+#     radius: 0.6
     
-  - type: barrel
-    s: 155.0
-    lane: 0
-    radius: 0.6
+#   - type: barrel
+#     s: 155.0
+#     lane: 0
+#     radius: 0.6
 
-  - type: barrel
-    s: 200.0
-    lane: 1
-    radius: 0.6
+#   - type: barrel
+#     s: 200.0
+#     lane: 1
+#     radius: 0.6
 
 
-# roadside_objects:
-#   # --- Traffic Light ---
-#   - type: traffic_light
-#     s: 50.0
-#     d: 3.5
-#     radius: 0.7
+roadside_objects:
+  # --- Traffic Light ---
+  - type: traffic_light
+    s: 50.0
+    d: 3.5
+    radius: 0.7
 
 
 scenario:
