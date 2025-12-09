@@ -30,7 +30,7 @@ def load_lanelet_osm(path):
 
 
 def plot_lanelet_map(nodes, ways):
-    plt.figure(figsize=(8, 8))
+    plt.figure(figsize=(10, 10))
 
     # Dibujar ways
     for way in ways:
@@ -38,16 +38,22 @@ def plot_lanelet_map(nodes, ways):
         ys = [p[1] for p in way]
         plt.plot(xs, ys, "-k", linewidth=1)
 
-    # Dibujar los nodos individuales (opcional)
+    # Dibujar nodos individuales
     xs = [p[0] for p in nodes.values()]
     ys = [p[1] for p in nodes.values()]
     plt.scatter(xs, ys, s=10, c="red")
 
-    plt.title("Lanelet2 Map")
-    plt.xlabel("Longitude (x)")
-    plt.ylabel("Latitude (y)")
-    plt.grid(True)
+    # 🔥 Personalización de textos y números
+    plt.title("Lanelet2 Map", fontsize=22)           # titulo grande
+    plt.xlabel("Longitude (x)", fontsize=18)         # label eje X
+    plt.ylabel("Latitude (y)", fontsize=18)          # label eje Y
+
+    # 🔥 Aumentar tamaño de los números en los ejes
+    plt.tick_params(axis='both', which='major', labelsize=14)
+
+    plt.grid(True, alpha=0.3)
     plt.axis("equal")
+    plt.tight_layout()
     plt.show()
 
 
