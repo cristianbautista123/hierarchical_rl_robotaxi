@@ -204,7 +204,7 @@ class TwoLaneHighwayEnv(gym.Env):
         for obj in self.roadside_objects:
             if obj["type"] == "traffic_light":
 
-                cycle = obj.get("cycle_time", 5.0)
+                cycle = obj.get("cycle_time", 70.0)
                 t = (self.time_elapsed + self.traffic_light_phase_offset) % cycle
 
                 red_dur = 0.4 * cycle
@@ -250,7 +250,7 @@ class TwoLaneHighwayEnv(gym.Env):
 
         self.time_elapsed = 0.0
 
-        cycle_time = 10.0
+        cycle_time = 20.0
         self.traffic_light_phase_offset = np.random.uniform(0, cycle_time)
 
         rng = np.random.default_rng(seed)
