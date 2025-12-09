@@ -1,6 +1,6 @@
 #!/bin/bash
 #SBATCH -J hier_ppo
-#SBATCH -A PAS2099
+#SBATCH -A PAS2119
 #SBATCH --ntasks=1
 #SBATCH --cpus-per-task=8
 #SBATCH --mem=8G

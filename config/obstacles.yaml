@@ -20,12 +20,12 @@ road_obstacles:
     radius: 0.6
 
 
-roadside_objects:
-  # --- Traffic Light ---
-  - type: traffic_light
-    s: 50.0
-    d: 3.5
-    radius: 0.7
+# roadside_objects:
+#   # --- Traffic Light ---
+#   - type: traffic_light
+#     s: 50.0
+#     d: 3.5
+#     radius: 0.7
 
 
 scenario:
