@@ -101,6 +101,8 @@ class TwoLaneHighwayEnv(gym.Env):
         self.in_lane_change = False
         self.target_lane = None
 
+        self.cycle_time = 70.0
+
 
 
     # ============================================================
@@ -204,7 +206,7 @@ class TwoLaneHighwayEnv(gym.Env):
         for obj in self.roadside_objects:
             if obj["type"] == "traffic_light":
 
-                cycle = obj.get("cycle_time", 70.0)
+                cycle = self.cycle_time
                 t = (self.time_elapsed + self.traffic_light_phase_offset) % cycle
 
                 red_dur = 0.4 * cycle
@@ -250,8 +252,7 @@ class TwoLaneHighwayEnv(gym.Env):
 
         self.time_elapsed = 0.0
 
-        cycle_time = 20.0
-        self.traffic_light_phase_offset = np.random.uniform(0, cycle_time)
+        self.traffic_light_phase_offset = np.random.uniform(0, self.cycle_time)
 
         rng = np.random.default_rng(seed)
 
@@ -273,95 +274,107 @@ class TwoLaneHighwayEnv(gym.Env):
 
         reward = 0.0
         self.time_elapsed += self.dt
-        
+        terminated = False
+        truncated = False
+
+        # ============================================================
+        # LANE CHANGE LOGIC
+        # ============================================================
         if not self.in_lane_change:
-            # Toggle lane
-            #target_lane = self.lane_id
-            if action == 1:
+            if action == 1:   # initiate lane change
                 self.in_lane_change = True
                 self.target_lane = 1 - self.lane_id
-                reward -= self.lane_change_penalty # is it necessary? -It is.
+                reward -= self.lane_change_penalty
                 target_d = self.lane_offsets[self.target_lane]
             else:
-                # Stay in lane
                 target_d = self.lane_offsets[self.lane_id]
         else:
             target_d = self.lane_offsets[self.target_lane]
 
-        # Move laterally
+        # Lateral motion
         d_err = target_d - self.d
         step_d = np.clip(d_err, -self.d_step_max, self.d_step_max)
         self.d += step_d
 
-        # print("DEBUG TYPE self.d:", type(self.d), self.d)
-        # print("DEBUG TYPE target_d:", type(target_d), target_d)
+        # Finish lane change
+        if self.in_lane_change and abs(self.d - target_d) < 0.2:
+            self.lane_id = self.target_lane
+            self.in_lane_change = False
+            self.target_lane = None
 
-        # Check if lane change is complete
-        if self.in_lane_change:
-            if abs(self.d - target_d) < 0.2:
-                self.lane_id = self.target_lane
-                self.in_lane_change = False
-                self.target_lane = None
-
-        # Move forward
         # ============================================================
-        # LONGITUDINAL MOTION WITH CORRECT STOP / TRAFFIC LIGHT LOGIC
+        # DISTANCE CALCULATIONS
         # ============================================================
-
         dist_stop = self._distance_to_stop_sign()
         dist_light = self._distance_to_traffic_light()
-        light_state = self._traffic_light_state()  # 0=red,1=yellow,2=green
+        light_state = self._traffic_light_state()  # 0 = red, 1 = yellow, 2 = green
 
-        # Default: move forward unless STOP is chosen
+        # ============================================================
+        # STOP SIGN LOGIC
+        # ============================================================
+        if 0 < dist_stop < 8.0:
+            if action != 2:     # MUST stop but didn't
+                reward -= 20
+                terminated = True
+        else:
+            if action == 2:     # unnecessary stop
+                reward -= 2
+
+        # ============================================================
+        # TRAFFIC LIGHT LOGIC
+        # ============================================================
+        if 0 < dist_light < 10.0:
+
+            # Red light
+            if light_state == 0:
+                if action == 2:
+                    reward += 10
+                else:
+                    reward -= 50
+                    terminated = True
+
+            # Green/yellow — stopping not needed
+            else:
+                if action == 2:
+                    reward -= 2
+
+        # ============================================================
+        # LONGITUDINAL MOTION
+        # ============================================================
         delta_s = self.v_ref * self.dt
-        if action == 2:  # STOP
+        if action == 2:   # STOP action
             delta_s = 0.0
 
-        # ------------------------------
-        # STOP SIGN LOGIC
-        # ------------------------------
-        if dist_stop < 8.0:  # Should stop
-            if action != 2:
-                reward -= 20  # failed to stop
-        else:
-            # Stopped when not needed
-            if action == 2:
-                reward -= 2
-
-        # ------------------------------
-        # TRAFFIC LIGHT LOGIC
-        # ------------------------------
-        if dist_light < 10.0 and light_state == 0:  # RED light
-            if action != 2:
-                reward -= 15  # ran a red light
-        else:
-            # stopping unnecessarily at green/yellow
-            if action == 2 and dist_light > 10.0:
-                reward -= 2
-
-        # Apply forward motion
         s_prev = self.s
         self.s = min(self.s + delta_s, self.s_max)
-        reward += (self.s - s_prev)
+        reward += (self.s - s_prev)  # positive reward for progress
 
-
-        # Penalize lateral deviation
+        # ============================================================
+        # LATERAL DEVIATION PENALTY
+        # ============================================================
         reward -= 0.1 * abs(self.d - self.lane_offsets[self.lane_id])
 
-        # Collision
+        # ============================================================
+        # COLLISION CHECK
+        # ============================================================
         if self._check_collisions():
             reward -= 50
             terminated = True
-        else:
-            terminated = bool(self.s >= self.s_max)
 
-        truncated = False
+        # ============================================================
+        # EPISODE SUCCESS
+        # ============================================================
+        if self.s >= self.s_max:
+            terminated = True
 
-        # Render
+        # ============================================================
+        # RENDER
+        # ============================================================
         if self.render_mode == "human":
             self.render()
 
         return self._get_obs(), reward, terminated, truncated, self._get_info()
+
 
 
     # ============================================================

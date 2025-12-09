@@ -1,0 +1,80 @@
+Run directory: /users/PAS2119/cristianbautistai/hierarchical_rl_robotaxi/logs/2025-12-09_00-41-23
+
+Map saved at: /users/PAS2119/cristianbautistai/hierarchical_rl_robotaxi/logs/2025-12-09_00-41-23/map_visualization.png
+
+Using cpu device
+Wrapping the env in a DummyVecEnv.
+Logging to /users/PAS2119/cristianbautistai/hierarchical_rl_robotaxi/logs/2025-12-09_00-41-23/tensorboard/PPO_1
+---------------------------------
+| rollout/           |          |
+|    ep_len_mean     | 336      |
+|    ep_rew_mean     | -437     |
+| time/              |          |
+|    fps             | 2343     |
+|    iterations      | 1        |
+|    time_elapsed    | 0        |
+|    total_timesteps | 2048     |
+---------------------------------
+-----------------------------------------
+| rollout/                |             |
+|    ep_len_mean          | 310         |
+|    ep_rew_mean          | -299        |
+| time/                   |             |
+|    fps                  | 1803        |
+|    iterations           | 2           |
+|    time_elapsed         | 2           |
+|    total_timesteps      | 4096        |
+| train/                  |             |
+|    approx_kl            | 0.039697558 |
+|    clip_fraction        | 0.386       |
+|    clip_range           | 0.2         |
+|    entropy_loss         | -1.07       |
+|    explained_variance   | -0.00671    |
+|    learning_rate        | 0.0003      |
+|    loss                 | 490         |
+|    n_updates            | 10          |
+|    policy_gradient_loss | -0.0201     |
+|    value_loss           | 735         |
+-----------------------------------------
+----------------------------------------
+| rollout/                |            |
+|    ep_len_mean          | 287        |
+|    ep_rew_mean          | -216       |
+| time/                   |            |
+|    fps                  | 1694       |
+|    iterations           | 3          |
+|    time_elapsed         | 3          |
+|    total_timesteps      | 6144       |
+| train/                  |            |
+|    approx_kl            | 0.07210381 |
+|    clip_fraction        | 0.21       |
+|    clip_range           | 0.2        |
+|    entropy_loss         | -0.985     |
+|    explained_variance   | 0.000148   |
+|    learning_rate        | 0.0003     |
+|    loss                 | 528        |
+|    n_updates            | 20         |
+|    policy_gradient_loss | -0.0161    |
+|    value_loss           | 661        |
+----------------------------------------
+------------------------------------------
+| rollout/                |              |
+|    ep_len_mean          | 279          |
+|    ep_rew_mean          | -183         |
+| time/                   |              |
+|    fps                  | 1645         |
+|    iterations           | 4            |
+|    time_elapsed         | 4            |
+|    total_timesteps      | 8192         |
+| train/                  |              |
+|    approx_kl            | 0.0060427203 |
+|    clip_fraction        | 0.0524       |
+|    clip_range           | 0.2          |
+|    entropy_loss         | -0.91        |
+|    explained_variance   | 0.0782       |
+|    learning_rate        | 0.0003       |
+|    loss                 | 67.3         |
+|    n_updates            | 30           |
+|    policy_gradient_loss | -0.00547     |
+|    value_loss           | 658          |
+------------------------------------------
